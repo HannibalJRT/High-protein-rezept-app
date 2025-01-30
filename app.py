@@ -1,38 +1,47 @@
 import streamlit as st
 import random
 
-# Funktion zur Erstellung eines intelligenten Rezepts mit Schwierigkeitsgrad, Kochzeit und Tipps
-def generiere_rezept(zutaten):
-    rezept_name = f"Besonderes Rezept mit {', '.join(zutaten)}"
+# Funktion zur Erstellung eines Rezepts basierend nur auf den eingegebenen Zutaten
+def generiere_basis_rezept(zutaten):
+    rezept_name = f"Original Rezept mit {', '.join(zutaten)}"
     
-    # Berechnung der Zubereitungszeit
-    vorbereitungszeit = random.randint(5, 15)  # Minuten für das Schneiden und Vorbereiten
-    kochzeit = random.randint(10, 30)  # Minuten für das Kochen
-    gesamtzeit = vorbereitungszeit + kochzeit  # Gesamtzeit
+    vorbereitungszeit = random.randint(5, 15)
+    kochzeit = random.randint(10, 30)
+    gesamtzeit = vorbereitungszeit + kochzeit
 
-    # Berechnung der Schwierigkeit
-    if gesamtzeit < 15:
-        schwierigkeitsgrad = "Einfach"
-    elif 15 <= gesamtzeit <= 30:
-        schwierigkeitsgrad = "Mittel"
-    else:
-        schwierigkeitsgrad = "Schwierig"
-
-    # Detaillierte Zubereitungsschritte
     anweisungen = [
-        f"🔹 **Schritt 1:** Sammle alle Zutaten: {', '.join(zutaten)}. Wasche und schneide das Gemüse nach Bedarf. *(Dauer: {vorbereitungszeit} Minuten)*",
-        f"🔹 **Schritt 2:** Erhitze eine Pfanne mit etwas Öl. *(Dauer: 2 Minuten)*",
-        f"🔹 **Schritt 3:** Falls du Fleisch oder Fisch hast, würze es mit Salz, Pfeffer und Gewürzen.",
-        f"🔹 **Schritt 4:** Brate das Protein ({', '.join([z for z in zutaten if z in ['huhn', 'fisch', 'fleisch']])}) für 5-7 Minuten pro Seite an.",
-        f"🔹 **Schritt 5:** Falls du Reis oder Nudeln hast, koche sie für {random.randint(8, 15)} Minuten.",
-        f"🔹 **Schritt 6:** Füge das Gemüse hinzu und brate es für weitere 3-5 Minuten.",
-        f"🔹 **Schritt 7:** Mische alles zusammen und serviere es. *(Gesamtzeit: {gesamtzeit} Minuten)*",
-        "🔹 **Schritt 8:** Guten Appetit! 🍽️"
+        f"🔹 **Schritt 1:** Bereite die Zutaten vor: {', '.join(zutaten)}. *(Dauer: {vorbereitungszeit} Minuten)*",
+        "🔹 **Schritt 2:** Erhitze eine Pfanne mit Öl. *(Dauer: 2 Minuten)*",
+        "🔹 **Schritt 3:** Falls Fleisch oder Gemüse vorhanden ist, brate es goldbraun an.",
+        "🔹 **Schritt 4:** Falls du Nudeln oder Reis hast, koche sie gemäß den Anweisungen.",
+        "🔹 **Schritt 5:** Vermische alle Zutaten und serviere es warm.",
+        f"🔹 **Schritt 6:** Gesamtzeit: {gesamtzeit} Minuten. Guten Appetit! 🍽️"
+    ]
+
+    return rezept_name, anweisungen, vorbereitungszeit, kochzeit, gesamtzeit
+
+# Funktion zur Erstellung eines verbesserten Rezepts mit Ersatz und Tipps
+def generiere_verbessertes_rezept(zutaten):
+    rezept_name = f"Verbessertes Rezept mit {', '.join(zutaten)}"
+
+    vorbereitungszeit = random.randint(5, 15)
+    kochzeit = random.randint(10, 30)
+    gesamtzeit = vorbereitungszeit + kochzeit
+
+    schwierigkeitsgrad = "Einfach" if gesamtzeit < 15 else "Mittel" if gesamtzeit <= 30 else "Schwierig"
+
+    anweisungen = [
+        f"🔹 **Schritt 1:** Bereite die Zutaten vor: {', '.join(zutaten)}. *(Dauer: {vorbereitungszeit} Minuten)*",
+        "🔹 **Schritt 2:** Erhitze eine Pfanne mit Öl und brate das Protein an.",
+        "🔹 **Schritt 3:** Falls Gemüse vorhanden ist, schneide es fein und gib es in die Pfanne.",
+        "🔹 **Schritt 4:** Koche Beilagen wie Reis oder Nudeln, falls sie vorhanden sind.",
+        "🔹 **Schritt 5:** Vermische alles und verfeinere das Gericht mit Kräutern oder Gewürzen.",
+        f"🔹 **Schritt 6:** Gesamtzeit: {gesamtzeit} Minuten. Guten Appetit! 🍽️"
     ]
 
     return rezept_name, schwierigkeitsgrad, anweisungen, vorbereitungszeit, kochzeit, gesamtzeit
 
-# Funktion für Koch-Tipps
+# Funktion für Tipps
 def generiere_tipps():
     tipps = [
         "🌿 Füge frische Kräuter hinzu für mehr Geschmack!",
@@ -65,23 +74,28 @@ zutaten_input = st.text_input("🔍 Zutaten eingeben (durch Komma getrennt)")
 if st.button("🔎 Rezept generieren"):
     if zutaten_input:
         zutaten_liste = [z.strip().lower() for z in zutaten_input.split(",")]
-        rezept_titel, schwierigkeitsgrad, anweisungen, vorbereitungszeit, kochzeit, gesamtzeit = generiere_rezept(zutaten_liste)
 
-        st.success(f"**{rezept_titel}**")
-        
-        # Zubereitungszeiten anzeigen
-        st.subheader("⏳ **Zubereitungszeit:**")
-        st.write(f"🔪 **Vorbereitungszeit:** {vorbereitungszeit} Minuten")
-        st.write(f"🔥 **Kochzeit:** {kochzeit} Minuten")
-        st.write(f"⏱️ **Gesamtzeit:** {gesamtzeit} Minuten")
+        # Generiere Basis-Rezept (ohne Änderungen)
+        basis_rezept_titel, basis_anweisungen, basis_vorbereitungszeit, basis_kochzeit, basis_gesamtzeit = generiere_basis_rezept(zutaten_liste)
 
-        # Schwierigkeitsgrad anzeigen
-        st.subheader("⭐ **Schwierigkeitsgrad:**")
-        st.write(f"🧑‍🍳 **{schwierigkeitsgrad}**")
+        # Generiere verbessertes Rezept
+        verbessert_rezept_titel, schwierigkeitsgrad, verbessert_anweisungen, verbessert_vorbereitungszeit, verbessert_kochzeit, verbessert_gesamtzeit = generiere_verbessertes_rezept(zutaten_liste)
 
-        # Zubereitungsschritte anzeigen
+        # Zeige Original-Rezept
+        st.subheader("🍽️ **Original Rezept** (nur mit deinen Zutaten)")
+        st.success(f"**{basis_rezept_titel}**")
+        st.write(f"⏳ **Zubereitungszeit:** {basis_gesamtzeit} Minuten")
         st.subheader("📌 **Zubereitung:**")
-        for schritt in anweisungen:
+        for schritt in basis_anweisungen:
+            st.write(schritt)
+
+        # Zeige Verbesserte Version
+        st.subheader("✨ **Verbesserte Rezept-Version**")
+        st.success(f"**{verbessert_rezept_titel}**")
+        st.write(f"⭐ **Schwierigkeitsgrad:** {schwierigkeitsgrad}")
+        st.write(f"⏳ **Zubereitungszeit:** {verbessert_gesamtzeit} Minuten")
+        st.subheader("📌 **Zubereitung:**")
+        for schritt in verbessert_anweisungen:
             st.write(schritt)
 
         # Koch-Tipp anzeigen
@@ -97,4 +111,3 @@ if st.button("🔎 Rezept generieren"):
         
     else:
         st.warning("Bitte Zutaten eingeben, um ein Rezept zu generieren.")
-
