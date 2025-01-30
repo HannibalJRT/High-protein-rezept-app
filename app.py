@@ -1,71 +1,49 @@
-
 import streamlit as st
+import random
 
-# Titolo dell'app
+# Funzione per generare una ricetta casuale
+def generare_ricetta(ingredienti):
+    titolo_ricetta = f"Ricetta speciale con {', '.join(ingredienti)}"
+    
+    # Passaggi generici per la preparazione
+    passaggi = [
+        f"🔹 **Passaggio 1:** Prepara gli ingredienti: {', '.join(ingredienti)}.",
+        "🔹 **Passaggio 2:** Riscalda una padella con un filo d'olio.",
+        f"🔹 **Passaggio 3:** Cuoci {random.choice(ingredienti)} fino a doratura.",
+        f"🔹 **Passaggio 4:** Aggiungi gli altri ingredienti e mescola bene.",
+        "🔹 **Passaggio 5:** Servi caldo e buon appetito! 🍽️"
+    ]
+    
+    # Valori nutrizionali casuali
+    nutrizione = {
+        "Kalorien": random.randint(200, 600),
+        "Eiweiß": random.randint(10, 50),
+        "Fett": random.randint(5, 30),
+        "Kohlenhydrate": random.randint(10, 70)
+    }
+    
+    return titolo_ricetta, nutrizione, passaggi
+
+# UI di Streamlit
 st.title("🥗 High Protein Rezept-Generator für Sportler")
-
 st.write("Gib die Zutaten ein, die du im Kühlschrank hast:")
 
-# Dizionario con ricette ad alto contenuto proteico
-rezepte = {
-    "Hähnchenbrust mit Gemüse": {
-        "zutaten": ["hähnchenbrust", "brokkoli", "öl", "salz", "pfeffer"],
-        "nährwerte": {"Kalorien": 400, "Eiweiß": 35, "Fett": 15, "Kohlenhydrate": 5},
-        "zubereitungszeit": "30 Minuten",
-        "schwierigkeit": "Mittel",
-        "kategorie": "Proteinaufbau",
-        "anweisungen": [
-            "🔹 **Schritt 1:** Die Hähnchenbrust mit Salz und Pfeffer würzen.",
-            "🔹 **Schritt 2:** Erhitze etwas Öl in einer Pfanne und brate die Hähnchenbrust goldbraun an.",
-            "🔹 **Schritt 3:** Brokkoli in kleine Röschen schneiden und in einem separaten Topf mit Wasser kochen.",
-            "🔹 **Schritt 4:** Die Hähnchenbrust im Ofen bei 180°C für 15 Minuten backen.",
-            "🔹 **Schritt 5:** Mit dem Brokkoli servieren. Perfekt für den Muskelaufbau! 🏋️‍♂️"
-        ]
-    },
-    "Proteinshake": {
-        "zutaten": ["milch", "proteinpulver", "banane", "mandeln"],
-        "nährwerte": {"Kalorien": 300, "Eiweiß": 25, "Fett": 10, "Kohlenhydrate": 35},
-        "zubereitungszeit": "5 Minuten",
-        "schwierigkeit": "Einfach",
-        "kategorie": "Proteinaufbau",
-        "anweisungen": [
-            "🔹 **Schritt 1:** Banane in Stücke schneiden.",
-            "🔹 **Schritt 2:** Alle Zutaten in einen Mixer geben.",
-            "🔹 **Schritt 3:** Mixe die Zutaten bis sie cremig sind.",
-            "🔹 **Schritt 4:** In ein Glas gießen und direkt nach dem Training genießen! 🥤"
-        ]
-    }
-}
-
-# Campo di input per gli ingredienti
+# Input per gli ingredienti
 zutaten_input = st.text_input("🔍 Zutaten eingeben (getrennt durch Komma)")
 
-if st.button("🔎 Rezept suchen"):
+if st.button("🔎 Rezept generieren"):
     if zutaten_input:
         zutaten_liste = [z.strip().lower() for z in zutaten_input.split(",")]
         
-        bestes_rezept = None
-        max_zutaten_treffer = 0
+        # Genera una ricetta casuale con gli ingredienti forniti
+        titel, naehrwerte, anweisungen = generare_ricetta(zutaten_liste)
         
-        for rezept_name, details in rezepte.items():
-            zutaten_match = len(set(zutaten_liste) & set(details["zutaten"]))
-            
-            if zutaten_match > max_zutaten_treffer:
-                max_zutaten_treffer = zutaten_match
-                bestes_rezept = rezept_name
-        
-        if bestes_rezept:
-            details = rezepte[bestes_rezept]
-            st.success(f"**Das beste Rezept für dich:** {bestes_rezept}")
-            st.write(f"⏳ **Zubereitungszeit:** {details['zubereitungszeit']}")
-            st.write(f"⭐ **Schwierigkeit:** {details['schwierigkeit']}")
-            st.write(f"🔥 **Nährwerte:** {details['nährwerte']}")
-            st.write(f"💪 **Kategorie:** {details['kategorie']}")
-            
-            st.subheader("📌 **Zubereitung:**")
-            for schritt in details["anweisungen"]:
-                st.write(schritt)
-        else:
-            st.warning("❌ Kein passendes Rezept gefunden. Versuche andere Zutaten!")
+        st.success(f"**{titel}**")
+        st.write(f"🔥 **Nährwerte:** {naehrwerte}")
+
+        st.subheader("📌 **Zubereitung:**")
+        for schritt in anweisungen:
+            st.write(schritt)
     else:
-        st.warning("Bitte Zutaten eingeben, um ein Rezept zu finden.")
+        st.warning("Bitte Zutaten eingeben, um ein Rezept zu generieren.")
+
