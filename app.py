@@ -32,14 +32,15 @@ def generiere_rezept(zutaten):
 def generiere_bild(zutaten):
     beschreibung = f"Ein hochwertiges Foto eines köstlichen Gerichts mit {', '.join(zutaten)}"
     
-    response = openai.images.generate(
-        model="dall-e-2",
+    response = openai.Image.create(
         prompt=beschreibung,
+        model="dall-e-2",  # Specifica il modello corretto
         n=1,
         size="512x512"
     )
     
-    return response.data[0].url
+    return response["data"][0]["url"]
+
 
 
 # Streamlit UI
