@@ -31,8 +31,16 @@ def generiere_rezept(zutaten):
 # Funktion zur KI-Bilderzeugung basierend auf den Zutaten
 def generiere_bild(zutaten):
     beschreibung = f"Ein hochwertiges Foto eines köstlichen Gerichts mit {', '.join(zutaten)}"
-    response = openai.Image.create(prompt=beschreibung, n=1, size="512x512")
-    return response["data"][0]["url"]
+    
+    response = openai.images.generate(
+        model="dall-e-2",
+        prompt=beschreibung,
+        n=1,
+        size="512x512"
+    )
+    
+    return response.data[0].url
+
 
 # Streamlit UI
 st.title("🥗 High-Protein Rezept-Generator für Sportler")
